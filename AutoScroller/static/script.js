@@ -12,6 +12,7 @@ function toggleSound() {
         soundToggleButton.classList.add('off');
         // Add logic to disable sound
     }
+    sendButtonState();
 }
 
 function toggleScroll() {
@@ -26,6 +27,8 @@ function toggleScroll() {
         speedInput.disabled = true;
         // Add logic to disable sound
     }
+    sendButtonState();
+
 }
 
 // Example functions to update connection status
@@ -38,3 +41,39 @@ function updateControllerStatus(connected) {
 }
 
 // Call these functions when the status of device connections changes
+
+//AJAX Request function for asynchronous sending of button states to the server
+function sendButtonState(){
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", '/update_state', true);
+    xhr.setRequestHeader('Content-TYpe', 'application/json');
+    xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken')); // CSRF token for Django
+    xhr.onreadystatechange = function (){
+        if(this.readyState === XMLHttpRequest.DONE && this.status === 200){
+            console.log('y')
+            //successful response. Can add error handling stuff if necessary
+        }
+    }
+
+    var data ={
+        soundState: soundToggleButton.innerHTML,
+        scrollState: scrollToggleButton.innerHTML,
+        scrollSpeed: speedInput.value
+    };
+    xhr.send(JSON.stringify(data));
+}
+
+function getCookie(name){
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
