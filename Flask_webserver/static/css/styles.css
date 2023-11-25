@@ -70,3 +70,28 @@ button:active {
 #auto-scroll-toggle.off {
     background-color: #6c757d;
 }
+
+/* connecting */
+.connecting-button{
+    /* position: absolute;
+    top: 10px;
+    left: 10px; */
+    text-align: center;
+    /* width: 80px;
+    height: 35px; */
+    background-color: #d3a248;
+    color: white;
+    font-size: 16px;    
+}
+/* Connected state */
+.connected-button{
+    /* position: absolute;
+    top: 10px;
+    left: 10px; */
+    text-align: center;
+    /* width: 80px;
+    height: 35px; */
+    background-color: #37c548;
+    color: white;
+    font-size: 16px;    
+}

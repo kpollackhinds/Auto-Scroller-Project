@@ -18,6 +18,7 @@ connected = False
 current_state = {}
 
 mcu_thread = None
+mcu_socket = None
 stop_thread = threading.Event()
 
 def send_data(data):
@@ -64,6 +65,7 @@ def start_mcu_thread():
     mcu_thread.daemon = True
     mcu_thread.start()
 
+@socketio.on('reset-connection')
 def reset_connection():
     global mcu_thread, stop_thread, mcu_socket, connected
     print('Resetting Connection')

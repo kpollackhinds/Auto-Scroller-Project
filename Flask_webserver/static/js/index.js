@@ -4,8 +4,63 @@ var socket = io.connect('http://' + document.domain + ':'+location.port);
 var soundToggleButton = document.getElementById('sound-toggle');
 var scrollToggleButton = document.getElementById('auto-scroll-toggle');
 var speedInput = document.getElementById('scroll-speed');
+const connectButton = document.getElementById('connect-button');
+const resetButton = document.getElementById('reset-button');
 
 let connectionState = 'initial';
+
+connectButton.addEventListener("click", function(){
+    socket.emit('start_mcu_thread');
+
+    switch (connectionState){
+        case 'initial':
+            connectionState = 'connecting';
+            connectButton.textContent = 'Connecting...';
+            
+            connectButton.classList.remove('connect-button');
+            connectButton.classList.add('connecting-button');
+            break;
+        
+        case 'connecting':
+            // add additional error handling or functionality later
+            break;
+
+        case 'connected':
+            // add additional functionality later 
+            break
+    }
+});
+
+socket.on('mcu_connected', function(){
+    connectionState = 'connected';
+    connectButton.textContent = 'Connected';
+
+    connectButton.classList.remove('connecting-button');
+    connectButton.classList.add('connected-button');
+})
+
+resetButton.addEventListener("click", function(){
+    socket.emit('reset-connection');
+
+    switch (connectionState){
+        case 'initial':
+            break;
+        case 'connecting':
+            connectionState = 'initial';
+            connectButton.classList.remove('connecting-button');
+            connectButton.classList.add('connect-button')
+            connectButton.textContent = 'Connect to Device';
+
+            break;
+        case 'connected':
+            connectionState = 'initial';
+            connectButton.classList.remove('connected-button');
+            connectButton.classList.add('connect-button');
+            connectButton.textContent = 'Connect to Device';
+            break;
+    }
+})
+
 
 function toggleSound() {
     if (soundToggleButton.innerHTML === "Off") {
