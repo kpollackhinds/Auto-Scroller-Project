@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatic Scrolling Device Interface</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <script src="{{ url_for('static', filename='js/index.js') }}" type="module"></script>
+    <script src ="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+    <div class = "connection-state-buttons">
+        <button id = "connect-button" class = 'connect-button'>Connect to Device</button>
+        <button id = "reset-button" class = 'reset-button'>Reset Connection to Device</button>
+    </div>
+    <div class="container">
+        <h1>Scrolling Device Control Panel</h1>
+        
+          <!-- Toggle Buttons -->
+        <div class="toggle-group">
+            <div class = "toggle-item">
+                <label for="auto-scroll-toggle">Auto Scroll:</label>
+                <button id="auto-scroll-toggle" onclick="toggleScroll()">On</button>
+            </div>
+
+            <div class="toggle-item">
+                <label for="sound-toggle">Sound:</label>
+                <button id="sound-toggle" onclick="toggleSound()">On</button>
+            </div>
+            
+        </div>
+
+        <!-- Scrolling Speed Input -->
+        <div class="input-group">
+            <label for="scroll-speed">Scrolling Speed:</label>
+            <input type="number" id="scroll-speed" placeholder="Enter speed (1-10)">
+        </div>
+
+      
+
+        <!-- Device Connection Indicators -->
+        <div class="status-indicators">
+            <p>Wrist Device: <span id="wrist-status">Disconnected</span></p>
+            <p>Controller Device: <span id="controller-status">Disconnected</span></p>
+        </div>
+    </div>
+</body>
+</html>
