@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <script src="{{ url_for('static', filename='js/index.js') }}" type="module"></script>
     <script src ="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}" type="module"></script>
 
     <div class = "connection-state-buttons">
         <button id = "connect-button" class = "connect-button">Connect to Device</button>
@@ -21,12 +21,12 @@
         <div class="toggle-group">
             <div class = "toggle-item">
                 <label for="auto-scroll-toggle">Auto Scroll:</label>
-                <button id="auto-scroll-toggle" onclick="toggleScroll()">On</button>
+                <button id="auto-scroll-toggle">On</button>
             </div>
 
             <div class="toggle-item">
                 <label for="sound-toggle">Sound:</label>
-                <button id="sound-toggle" onclick="toggleSound()">On</button>
+                <button id="sound-toggle">On</button>
             </div>
             
         </div>

@@ -103,10 +103,14 @@ def update_setting_states():
             "scroll_state": data.get('scrollState'),
             "scroll_speed": data.get('scrollSpeed'),
         }
-        print('y')
-        # message to mcu telling it to make a get request to get updated settings
-        send_data('mkrq')
-        return jsonify({'status': 'success'})
+        # message to mcu telling it to make a get request to get updated settings\
+        if connected:
+            send_data('mkrq\n')
+        else:
+            print('No device connected')
+
+    return jsonify({'status': 'success'})
+
 
 @app.route('/get_setting_states', methods=['GET'])
 def get_setting_states():

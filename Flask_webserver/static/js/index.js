@@ -7,6 +7,10 @@ var speedInput = document.getElementById('scroll-speed');
 const connectButton = document.getElementById('connect-button');
 const resetButton = document.getElementById('reset-button');
 
+
+soundToggleButton.addEventListener('click', toggleSound);
+scrollToggleButton.addEventListener('click', toggleScroll);
+
 let connectionState = 'initial';
 
 connectButton.addEventListener("click", function(){
