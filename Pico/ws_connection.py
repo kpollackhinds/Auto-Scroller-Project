@@ -20,7 +20,6 @@ def connect_to_socket(ssid, pw, wlan, ip, port):
     while True:
         try:
             connectWifi(ssid, pw, wlan)
-
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             server_addr = (ip, port)
             sock.connect(server_addr)
