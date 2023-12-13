@@ -1,12 +1,16 @@
 import machine
-from machine import Pin
+from machine import Pin, UART
 import network, urequests
 import gc
 from ws_connection import connect_to_socket
 from secrets import Secrets
 
 led = Pin("LED", Pin.OUT, value=0)
-
+uart = UART(0, baudrate=9600, tx=Pin(12), rx=Pin(13))
+uart.init(bits=8, parity=None, stop=2)
+scroll_speed = ''
+scroll_state = ''
+sound_state = ''
 secrets = Secrets()
 # Secrets object defined as 
 # class Secrets:
@@ -33,18 +37,24 @@ while True:
                     break
 
                 data = data[:-1]
-
                 if data == b'mkrq':
                 #    run garbage collector to free up ram before making request
-                   gc.collect() 
-                   response = urequests.get('http://192.168.1.187:8080/get_setting_states')
-                   response = response.json()
-                   print(response)
+                    gc.collect() 
+                    
+                    # will need to change url based on what wifi you are connected to
+                    response = urequests.get('http://192.168.1.135:8080/get_setting_states')
+                    response = response.json()
+                    scroll_speed = response["scroll_speed"]
+                    scroll_state = response["scroll_state"]
+                    sound_state = response["sound_state"]
+                    print(response)
 
                 else:
-                    pass
+                    # need to combine scroll command and speed 
+                    command_string = data + ',' + scroll_state + ',' + scroll_speed + ',' + sound_state + '\n'
+                    uart.write(data)
 
-                print(data[:-1])
+                print(data)
             except OSError as e:
                 #handle socket erros or connection issues
                 print("Socket error: ", e)
