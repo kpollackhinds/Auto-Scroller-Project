@@ -9,18 +9,21 @@ const connectButtonArduino = document.getElementById('connect-button-arduino');
 
 const resetButton = document.getElementById('reset-button');
 
+const toggleDirection = document.getElementById('scroll-direction');
 
 soundToggleButton.addEventListener('click', toggleSound);
-scrollToggleButton.addEventListener('click', toggleScroll);
+scrollToggleButton.addEventListener('click', function(){toggleScroll(null)});
+speedInput.addEventListener('change', sendButtonState);
 
-let connectionState = 'initial';
+let mcuConnectionState = 'initial';
+let arduinoConnectionState = 'initial';
 
 connectButton.addEventListener("click", function(){
     socket.emit('start_mcu_thread');
 
-    switch (connectionState){
+    switch (mcuConnectionState){
         case 'initial':
-            connectionState = 'connecting';
+            mcuConnectionState = 'connecting';
             connectButton.textContent = 'Connecting...';
             
             connectButton.classList.remove('connect-button');
@@ -40,81 +43,121 @@ connectButton.addEventListener("click", function(){
 connectButtonArduino.addEventListener("click", function(){
     socket.emit('start_arduino_thread');
 
-    // switch (connectionState){
-    //     case 'initial':
-    //         connectionState = 'connecting';
-    //         connectButton.textContent = 'Connecting...';
+    switch (arduinoConnectionState){
+        case 'initial':
+            arduinoConnectionState = 'connecting';
+            connectButtonArduino.textContent = 'Connecting...';
             
-    //         connectButton.classList.remove('connect-button');
-    //         connectButton.classList.add('connecting-button');
-    //         break;
+            connectButtonArduino.classList.remove('connect-button');
+            connectButtonArduino.classList.add('connecting-button');
+            break;
         
-    //     case 'connecting':
-    //         // add additional error handling or functionality later
-    //         break;
+        case 'connecting':
+            // add additional error handling or functionality later
+            break;
 
-    //     case 'connected':
-    //         // add additional functionality later 
-    //         break
-    // }
+        case 'connected':
+            // add additional functionality later 
+            break
+    }
 });
 
 socket.on('mcu_connected', function(){
-    connectionState = 'connected';
+    mcuConnectionState = 'connected';
     connectButton.textContent = 'Connected';
 
     connectButton.classList.remove('connecting-button');
     connectButton.classList.add('connected-button');
 })
 
-resetButton.addEventListener("click", function(){
-    socket.emit('reset-connection');
+socket.on('arduino_connected', function(){
+    arduinoConnectionState = 'connected';
+    connectButtonArduino.textContent = 'Connected';
 
-    switch (connectionState){
-        case 'initial':
-            break;
-        case 'connecting':
-            connectionState = 'initial';
-            connectButton.classList.remove('connecting-button');
-            connectButton.classList.add('connect-button')
-            connectButton.textContent = 'Connect to Device';
-
-            break;
-        case 'connected':
-            connectionState = 'initial';
-            connectButton.classList.remove('connected-button');
-            connectButton.classList.add('connect-button');
-            connectButton.textContent = 'Connect to Device';
-            break;
-    }
+    connectButtonArduino.classList.remove('connecting-button');
+    connectButtonArduino.classList.add('connected-button');
 })
 
+socket.on('autoscroll on', function(){
+    toggleScroll("on");
+})
+
+socket.on('autoscroll off', function(){
+    toggleScroll("off");
+})
+
+// resetButton.addEventListener("click", function(){
+//     socket.emit('reset-connection');
+
+//     switch (connectionState){
+//         case 'initial':
+//             break;
+//         case 'connecting':
+//             connectionState = 'initial';
+//             connectButton.classList.remove('connecting-button');
+//             connectButton.classList.add('connect-button')
+//             connectButton.textContent = 'Connect to Device';
+
+//             break;
+//         case 'connected':
+//             connectionState = 'initial';
+//             connectButton.classList.remove('connected-button');
+//             connectButton.classList.add('connect-button');
+//             connectButton.textContent = 'Connect to Device';
+//             break;
+//     }
+// })
+
+toggleDirection.addEventListener('click', function(){
+    if (toggleDirection.innerHTML === "Up ↑"){
+        toggleDirection.innerHTML = "Down ↓";
+        // Maybe do classlist stuff if we want additional styling
+    }
+    else if (toggleDirection.innerHTML === "Down ↓"){
+        toggleDirection.innerHTML = "Up ↑";
+    }
+
+    sendButtonState();
+});
 
 function toggleSound() {
-    if (soundToggleButton.innerHTML === "Off") {
-        soundToggleButton.innerHTML = "On";
+    if (soundToggleButton.innerHTML === "off") {
+        soundToggleButton.innerHTML = "on";
         soundToggleButton.classList.remove('off');
         // Add logic to enable sound
     } else {
-        soundToggleButton.innerHTML = "Off";
+        soundToggleButton.innerHTML = "off";
         soundToggleButton.classList.add('off');
         // Add logic to disable sound
     }
     sendButtonState();
 }
 
-function toggleScroll() {
-    if (scrollToggleButton.innerHTML === "Off") {
-        scrollToggleButton.innerHTML = "On";
+function toggleScroll(state = null) {
+    console.log(state);
+    if (state === null){
+        if (scrollToggleButton.innerHTML === "off") {
+            scrollToggleButton.innerHTML = "on";
+            scrollToggleButton.classList.remove('off');
+            speedInput.disabled = false;
+        } else {
+            scrollToggleButton.innerHTML = "off";
+            scrollToggleButton.classList.add('off');
+            speedInput.disabled = true;
+        }
+    }
+
+    else if (state == "on"){
+        scrollToggleButton.innerHTML = "on";
         scrollToggleButton.classList.remove('off');
         speedInput.disabled = false;
-        // Add logic to enable sound
-    } else {
-        scrollToggleButton.innerHTML = "Off";
-        scrollToggleButton.classList.add('off');
-        speedInput.disabled = true;
-        // Add logic to disable sound
     }
+    else if(state == "off"){
+        scrollToggleButton.innerHTML = "off";
+        scrollToggleButton.classList.add("off");
+        speedInput.disabled = true;
+    }
+    
     sendButtonState();
 
 }
@@ -142,7 +185,7 @@ function sendButtonState(){
     var data = {
         soundState: soundToggleButton.innerHTML,
         scrollState: scrollToggleButton.innerHTML,
-        scrollSpeed: speedInput.value
+        scrollSpeed: (toggleDirection.innerHTML === "Down ↓") ? speedInput.value *-1 : speedInput.value 
     };
     xhr.send(JSON.stringify(data));
 

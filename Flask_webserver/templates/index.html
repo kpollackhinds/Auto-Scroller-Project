@@ -11,10 +11,10 @@
     <script src="{{ url_for('static', filename='js/index.js') }}" type="module"></script>
 
     <div class = "connection-state-buttons">
-        <button id = "connect-button" class = "connect-button">Connect to Pico</button>
+        <button id = "connect-button" class = "connect-button">Connect to Station</button>
         <!-- fix class definitinos for the line below -->
-        <button id = "connect-button-arduino" class = "connect-button">Connect to Arduino</button>
-        <button id = "reset-button" class = "reset-button">Reset Connection to Device</button>
+        <button id = "connect-button-arduino" class = "connect-button">Connect to Wrist</button>
+        <!-- <button id = "reset-button" class = "reset-button">Reset Connection to Device</button> -->
     </div>
     <div class="container">
         <h1>Scrolling Device Control Panel</h1>
@@ -35,9 +35,16 @@
 
         <!-- Scrolling Speed Input -->
         <div class="input-group">
-            <label for="scroll-speed">Scrolling Speed:</label>
-            <input type="number" id="scroll-speed" placeholder="Enter speed (1-10)">
+            <div class= "scroll-speed-wrapper">
+                <label for="scroll-speed">Scrolling Speed:</label>
+                <input type="number" id="scroll-speed" placeholder="Enter scroll speed (1-10)">    
+            </div>
+            
+            <div class="direction-toggle">
+                <button id="scroll-direction" class="up">Up ↑</button>
+            </div>
         </div>
+
 
       
 
