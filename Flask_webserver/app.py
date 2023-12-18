@@ -27,6 +27,7 @@ arduino_thread = None
 arduino_socket = None
 # stop_thread = threading.Event()
 
+scroll_up = True
 
 def send_data(data):
     if 'mcu_socket' in globals():
@@ -121,6 +122,7 @@ def start_mcu_thread():
     mcu_thread = threading.Thread(target=mcu_connection_handler)
     mcu_thread.daemon = True
     mcu_thread.start()
+
 
 # @socketio.on('reset-connection')
 # def reset_connection():
