@@ -13,7 +13,7 @@ int distance;
 String message, sound_state, scroll_state, scroll_speed;
 int direction=1;
 int delayTime;
-bool prevOn=true;
+bool prevOn=false;
 bool audio=true;
 void Stop(){
   scroller.write(90);
@@ -34,42 +34,47 @@ void stopSound(){
 }
 void Scroll(int dir){
   if(dir ==-1){
-    scroller.write(0);
+    scroller.write(20);
   }else if(dir==1){
-    scroller.write(180);
+    scroller.write(160);
   }
   //speed at 6V .17s per 60, 4.8V .2s per 60
-  delay(170*6);
+  delay(170*6.5);
   Stop();
 }
 void setup() {
   Serial1.begin(9600);
+  Serial.begin(9600);
   pinMode(buzzer,OUTPUT);
   scroller.attach(servoPin);
 }
 
 void loop() {
   distance = hc.dist(0);
-  scroll_state ="";
-  scroll_speed="";
-  sound_state="";
+  //Serial.println(distance);
+  //scroll_state ="";
+  //scroll_speed="";
+  //sound_state="";
   message="";
-  if(distance>50 && distance<200){
+  if((distance>20 && distance<200)||distance==0){
     //get message way TBD can all be changed later
-    while (Serial1.available() >= 0) {
+    while (Serial1.available() > 0) {
       //data,scroll_state,scroll_speed,sound_state
       //data -> up down left right
       //scroll_state -> on off
       //scroll_speed -> int
       //sound_state -> on off
       message = Serial1.readStringUntil(',');
-      Serial1.read();
+      //Serial1.read();
       scroll_state=Serial1.readStringUntil(',');
-      Serial1.read();
+      //Serial1.read();
       scroll_speed=Serial1.readStringUntil(',');
-      Serial1.read();
+      //Serial1.read();
       sound_state = Serial1.readStringUntil('\n');
-      Serial.print(message + scroll_state + scroll_speed+ sound_state);
+      Serial.println(message);
+      Serial.println(scroll_state);
+      Serial.println(scroll_speed); 
+      Serial.println(sound_state);
     }
     if(sound_state.equals("on")){
       audio=true;
@@ -93,8 +98,10 @@ void loop() {
       Scroll(1);
     }
     delayTime = abs(scroll_speed.toInt());
-    direction=scroll_speed.toInt()/delayTime;
-    if(autoScroll && millis()>lastScroll+delayTime*1000){
+    if(delayTime!=0){
+      direction=scroll_speed.toInt() / delayTime;
+    }
+    if(autoScroll && millis()>lastScroll+delayTime){
       if(!prevOn&&audio){
         startSound();
       }
@@ -106,7 +113,8 @@ void loop() {
   }
   else{
     //send message to stop count
-    if(prevOn){
+    Serial.println(distance);
+    if(prevOn&&autoScroll){
       if(audio){
         stopSound();
       }
