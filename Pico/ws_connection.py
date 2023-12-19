@@ -2,7 +2,7 @@ from time import sleep
 import network
 import usocket as socket
 
-def connectWifi(ssid, pw, wlan):
+def connectWifi(ssid, pw, wlan, led):
     wlan.active(True)
     wlan.disconnect()
     wlan.connect(ssid, pw)
@@ -13,13 +13,14 @@ def connectWifi(ssid, pw, wlan):
 
     ip = wlan.ifconfig()[0]
     print(f'connected on {ip}')
+    led.on()
     return ip
 
 
-def connect_to_socket(ssid, pw, wlan, ip, port):
+def connect_to_socket(ssid, pw, wlan, ip, port, led):
     while True:
         try:
-            connectWifi(ssid, pw, wlan)
+            connectWifi(ssid, pw, wlan, led)
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             server_addr = (ip, port)
             sock.connect(server_addr)

@@ -23,12 +23,12 @@
         <div class="toggle-group">
             <div class = "toggle-item">
                 <label for="auto-scroll-toggle">Auto Scroll:</label>
-                <button id="auto-scroll-toggle">On</button>
+                <button id="auto-scroll-toggle">off</button>
             </div>
 
             <div class="toggle-item">
                 <label for="sound-toggle">Sound:</label>
-                <button id="sound-toggle">On</button>
+                <button id="sound-toggle">on</button>
             </div>
             
         </div>
@@ -36,8 +36,8 @@
         <!-- Scrolling Speed Input -->
         <div class="input-group">
             <div class= "scroll-speed-wrapper">
-                <label for="scroll-speed">Scrolling Speed:</label>
-                <input type="number" id="scroll-speed" placeholder="Enter scroll speed (1-10)">    
+                <label for="scroll-speed">Scrolling Delay (in ms):</label>
+                <input type="number" id="scroll-speed" placeholder="Enter scroll speed (1-10)" value = "1000">    
             </div>
             
             <div class="direction-toggle">
@@ -50,8 +50,8 @@
 
         <!-- Device Connection Indicators -->
         <div class="status-indicators">
-            <p>Wrist Device: <span id="wrist-status">Disconnected</span></p>
-            <p>Controller Device: <span id="controller-status">Disconnected</span></p>
+            <!-- <p>Wrist Device: <span id="wrist-status">Disconnected</span></p>
+            <p>Controller Device: <span id="controller-status">Disconnected</span></p> -->
         </div>
     </div>
 </body>

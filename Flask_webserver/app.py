@@ -161,6 +161,7 @@ def update_setting_states():
             "sound_state": data.get('soundState'),
             "scroll_state": data.get('scrollState'),
             "scroll_speed": data.get('scrollSpeed'),
+            "dir":data.get('dir')
         }
         # message to mcu telling it to make a get request to get updated settings\
         if mcu_connected:

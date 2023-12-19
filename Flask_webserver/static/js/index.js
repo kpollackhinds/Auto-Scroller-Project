@@ -1,9 +1,9 @@
 //******Reminder to change document.domain to location.hostname *****
 var socket = io.connect('http://' + document.domain + ':'+location.port);
 
-var soundToggleButton = document.getElementById('sound-toggle');
-var scrollToggleButton = document.getElementById('auto-scroll-toggle');
-var speedInput = document.getElementById('scroll-speed');
+const soundToggleButton = document.getElementById('sound-toggle');
+const scrollToggleButton = document.getElementById('auto-scroll-toggle');
+const speedInput = document.getElementById('scroll-speed');
 const connectButton = document.getElementById('connect-button');
 const connectButtonArduino = document.getElementById('connect-button-arduino');
 
@@ -80,10 +80,12 @@ socket.on('arduino_connected', function(){
 
 socket.on('autoscroll on', function(){
     toggleScroll("on");
+    // sendButtonState();
 })
 
 socket.on('autoscroll off', function(){
     toggleScroll("off");
+    // sendButtonState();
 })
 
 // resetButton.addEventListener("click", function(){
@@ -136,31 +138,30 @@ function toggleSound() {
 function toggleScroll(state = null) {
     console.log(state);
     if (state === null){
-        if (scrollToggleButton.innerHTML === "off") {
-            scrollToggleButton.innerHTML = "on";
-            scrollToggleButton.classList.remove('off');
-            speedInput.disabled = false;
-        } else {
+        if (scrollToggleButton.innerHTML === "on") {
             scrollToggleButton.innerHTML = "off";
-            scrollToggleButton.classList.add('off');
+            scrollToggleButton.classList.remove('on');
             speedInput.disabled = true;
+        } else {
+            scrollToggleButton.innerHTML = "on";
+            scrollToggleButton.classList.add('on');
+            speedInput.disabled = false;
         }
     }
-
     else if (state == "on"){
         scrollToggleButton.innerHTML = "on";
-        scrollToggleButton.classList.remove('off');
+        scrollToggleButton.classList.add('on');
         speedInput.disabled = false;
     }
     else if(state == "off"){
         scrollToggleButton.innerHTML = "off";
-        scrollToggleButton.classList.add("off");
+        scrollToggleButton.classList.remove("on");
         speedInput.disabled = true;
     }
     
     sendButtonState();
-
 }
+
 
 // Example functions to update connection status
 function updateWristStatus(connected) {
@@ -185,8 +186,10 @@ function sendButtonState(){
     var data = {
         soundState: soundToggleButton.innerHTML,
         scrollState: scrollToggleButton.innerHTML,
-        scrollSpeed: (toggleDirection.innerHTML === "Down ↓") ? speedInput.value *-1 : speedInput.value 
+        scrollSpeed: speedInput.value,
+        dir: (toggleDirection.innerHTML === "Down ↓") ? -1 : 1 
     };
+
     xhr.send(JSON.stringify(data));
 
 }
