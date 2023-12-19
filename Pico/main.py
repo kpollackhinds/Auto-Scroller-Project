@@ -6,11 +6,12 @@ from ws_connection import connect_to_socket
 from secrets import Secrets
 
 led = Pin("LED", Pin.OUT, value=0)
-uart = UART(0, baudrate=9600, tx=Pin(12), rx=Pin(13))
+uart = UART(1, baudrate=9600, tx=Pin(4), rx=Pin(5))
 uart.init(bits=8, parity=None, stop=2)
 scroll_speed = ''
 scroll_state = ''
 sound_state = ''
+direction = 1
 secrets = Secrets()
 # Secrets object defined as 
 # class Secrets:
@@ -26,8 +27,10 @@ ssid, pw = secrets.ssid, secrets.pw
 global wlan
 wlan = network.WLAN(network.STA_IF)
 
+state_url = f"http://{secrets.server_ip}:8080/get_setting_states"
+
 while True:
-    sock = connect_to_socket(ssid, pw, wlan, secrets.server_ip, secrets.port)
+    sock = connect_to_socket(ssid, pw, wlan, secrets.server_ip, secrets.port, led)
     if sock is not None:
         led.on()
         while True:
@@ -42,19 +45,31 @@ while True:
                     gc.collect() 
                     
                     # will need to change url based on what wifi you are connected to
-                    response = urequests.get('http://192.168.1.135:8080/get_setting_states')
+                    response = urequests.get(state_url)
                     response = response.json()
+                    print(response)
                     scroll_speed = response["scroll_speed"]
                     scroll_state = response["scroll_state"]
                     sound_state = response["sound_state"]
-                    print(response)
+                    direction = response["dir"]
+                #     print(scroll_speed, direction)
+                    if not direction:
+                        direction = 1
+                    
+                    if scroll_speed == "":
+                        scroll_speed = 1000
 
+                    command_string = ''+ ',' + scroll_state + ',' + str(int(scroll_speed) * int(direction)) + ',' + sound_state + '\n'
+                    uart.write(command_string)
+                    print(command_string)
                 else:
                     # need to combine scroll command and speed 
-                    command_string = data + ',' + scroll_state + ',' + scroll_speed + ',' + sound_state + '\n'
-                    uart.write(data)
+                    command_string = data + ',' + scroll_state + ',' + str(int(scroll_speed)*int(direction)) + ',' + sound_state + '\n'
+                    uart.write(command_string)
+                    print(command_string)
 
-                print(data)
+
+                # print(data)
             except OSError as e:
                 #handle socket erros or connection issues
                 print("Socket error: ", e)

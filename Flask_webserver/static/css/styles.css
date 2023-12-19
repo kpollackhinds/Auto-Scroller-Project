@@ -97,8 +97,8 @@ button:active {
     background-color: #6c757d;
 }
 
-#auto-scroll-toggle.off {
-    background-color: #6c757d;
+#auto-scroll-toggle.on {
+    background-color: #007bff;
 }
 
 /* connecting */
@@ -124,4 +124,8 @@ button:active {
     background-color: #37c548;
     color: white;
     font-size: 16px;    
+}
+
+#auto-scroll-toggle {
+    background-color: #6c757d; /* This color indicates the 'off' state */
 }
